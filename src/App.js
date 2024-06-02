@@ -10,7 +10,7 @@ function App() {
   return (
     <div className="App">
           <div className="header">
-            <p><a href="#">HOME</a></p>
+            <p><a href="#">ME</a></p>
             <p><a href="#">ABOUT US</a></p>
             <p><a href="#">SERVICES</a></p>
             <p><a href="#">PORTFOLIO</a></p>
