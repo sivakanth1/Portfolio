@@ -14,7 +14,7 @@ function App() {
             <p><a href="#">ABOUT US</a></p>
             <p><a href="#">SERVICES</a></p>
             <p><a href="#">PORTFOLIO</a></p>
-            <p><a href="#">CONTACT US</a></p>
+            <p><a href="#contact">CONTACT US</a></p>
           </div>
 
           <Home />
