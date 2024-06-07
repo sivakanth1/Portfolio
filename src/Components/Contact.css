@@ -1,5 +1,5 @@
 .contact-form {
-  max-width: 100%;
+  max-width: 600px;
   margin: 0 auto;
   padding: 30px;
   border: 2px solid #eee; 
@@ -46,7 +46,8 @@
 
 .form-textarea {
   min-height: 150px;
-  resize: vertical;
+  resize: none;
+  overflow: auto;
 }
 
 .form-button {
