@@ -29,7 +29,7 @@ class PortfolioHome extends StatefulWidget {
 
 class _PortfolioHomeState extends State<PortfolioHome>
     with TickerProviderStateMixin {
-  // Page enter animations
+  // --- Page enter animations ---
   late final AnimationController _fadeController = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 1500),
@@ -56,213 +56,324 @@ class _PortfolioHomeState extends State<PortfolioHome>
         CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut),
       );
 
-  // Scroll + section visibility
+  // --- Scroll + section visibility ---
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _homeKey = GlobalKey();
   final GlobalKey _aboutKey = GlobalKey();
+  final GlobalKey _educationKey = GlobalKey();
+  final GlobalKey _experienceKey = GlobalKey();
   final GlobalKey _skillsKey = GlobalKey();
   final GlobalKey _projectsKey = GlobalKey();
+  final GlobalKey _publicationsKey = GlobalKey();
   final GlobalKey _certificationsKey = GlobalKey();
   final GlobalKey _contactKey = GlobalKey();
 
   final Map<String, bool> _sectionVisibility = {
     'about': false,
+    'education': false,
+    'experience': false,
     'skills': false,
     'projects': false,
+    'publications': false,
     'certifications': false,
     'contact': false,
   };
 
   bool _showToTop = false;
   int _activeBottomIndex = 0;
+  bool _isOverFooter = false;
 
   String activeTab = 'all';
 
-  // Data
+  // For showcase carousel
+  final PageController _showcaseController = PageController();
+  int _currentShowcaseIndex = 0;
+
+  // --- Data (from your resume) ---
+  final List<Map<String, dynamic>> showcaseProjects = [
+    {
+      'title': 'Dynamic Parallel Agentic Orchestration',
+      'description':
+          'Designing and implementing a multi-agent controller using AWS EC2 and Lambda to dynamically choose between data-parallel and instruction-parallel execution across multiple LLMs, improving throughput and reducing latency by up to 40%.',
+      'details':
+          'Developed a Streamlit-based interface integrated with Python\'s asyncio for concurrent LLM API execution and result aggregation, enhancing performance, reliability, and scalability for AI-driven orchestration applications.',
+      'tech': ['Python', 'AWS EC2', 'Lambda', 'Streamlit', 'asyncio', 'LLMs'],
+      'period': 'September 2025 – Present',
+      'github': 'https://github.com/sivakanth1',
+      'image': 'assets/project1.jpg',
+    },
+    {
+      'title': 'SynerSched – Academic Scheduling & Collaboration App',
+      'description':
+          'Developed a Flutter app with Firebase backend that auto-generates conflict-free weekly schedules, improving users\' time-management efficiency by 30%.',
+      'details':
+          'Implemented AES-256 encryption and secure Firebase integration, achieving zero data leakage in audits. Integrated bilingual support, dark/light themes, push notifications, and real-time collaboration features to enhance student engagement.',
+      'tech': ['Flutter', 'Firebase', 'AES-256', 'Push Notifications'],
+      'period': 'May 2025 – August 2025',
+      'github': 'https://github.com/sivakanth1',
+      'image': 'assets/project2.jpg',
+    },
+    {
+      'title': 'Detecting Road Damage from Aerial Imagery',
+      'description':
+          'Implemented YOLOv7, Faster R-CNN, and Vision Transformers using Python (PyTorch) for real-time defect detection.',
+      'details':
+          'Optimized training via mixed precision and CUDA, improving model speed by 1.5x. Containerized the complete inference pipeline using Docker, enabling scalable deployment and reproducibility.',
+      'tech': ['Python', 'PyTorch', 'YOLOv7', 'Docker', 'CUDA'],
+      'period': 'January 2025 – April 2025',
+      'github': 'https://github.com/sivakanth1',
+      'image': 'assets/project3.jpg',
+    },
+  ];
+
   final List<Map<String, dynamic>> projects = [
     {
-      'title': 'Enterprise Resource Planning System',
-      'category': 'application',
-      'description':
-          'Built a comprehensive ERP solution for manufacturing industry with modules for inventory, HR, and finance management.',
-      'tech': ['Java', 'Spring Boot', 'Angular', 'PostgreSQL', 'Docker'],
-      'highlights': [
-        'Reduced processing time by 40%',
-        'Served 500+ concurrent users',
-        'Integrated 15+ third-party APIs',
-      ],
-      'year': '2024',
-    },
-    {
-      'title': 'Mobile Banking Application',
-      'category': 'application',
-      'description':
-          'Developed cross-platform banking app with biometric authentication, real-time transactions, and financial analytics.',
-      'tech': ['React Native', 'Node.js', 'MongoDB', 'AWS', 'Redux'],
-      'highlights': [
-        '100K+ downloads',
-        '4.8★ rating on app stores',
-        'PCI DSS compliant',
-      ],
-      'year': '2024',
-    },
-    {
-      'title': 'AI-Powered Code Review Tool',
+      'title': 'Dynamic Parallel Agentic Orchestration',
       'category': 'software',
       'description':
-          'Created an intelligent code review system that analyzes code quality, suggests improvements, and detects vulnerabilities.',
-      'tech': ['Python', 'FastAPI', 'TensorFlow', 'Redis', 'Docker'],
+          'Multi-agent controller using AWS for dynamic LLM execution optimization.',
+      'tech': ['Python', 'AWS', 'Lambda', 'Streamlit'],
       'highlights': [
-        'Analyzed 50K+ pull requests',
-        '85% accuracy in bug detection',
-        'Reduced review time by 60%',
+        'Improved throughput by 40%',
+        'Concurrent LLM API execution',
+        'Enhanced scalability',
       ],
-      'year': '2023',
+      'year': '2025',
     },
     {
-      'title': 'Cloud-Native Microservices Platform',
-      'category': 'software',
-      'description':
-          'Architected and implemented a scalable microservices infrastructure for e-commerce platform handling millions of requests.',
-      'tech': ['Go', 'Kubernetes', 'RabbitMQ', 'Elasticsearch', 'Prometheus'],
-      'highlights': [
-        '99.99% uptime',
-        'Auto-scaling architecture',
-        'Handles 10M requests/day',
-      ],
-      'year': '2023',
-    },
-    {
-      'title': 'Healthcare Management System',
+      'title': 'SynerSched – Academic Scheduling App',
       'category': 'application',
       'description':
-          'Developed patient management system with appointment scheduling, electronic health records, and telemedicine features.',
-      'tech': ['C#', '.NET Core', 'React', 'SQL Server', 'SignalR'],
+          'Flutter app with Firebase for conflict-free schedule generation.',
+      'tech': ['Flutter', 'Firebase', 'AES-256'],
       'highlights': [
-        'HIPAA compliant',
-        'Integrated with 20+ hospitals',
-        'Real-time notifications',
+        '30% time-management improvement',
+        'Zero data leakage',
+        'Real-time collaboration',
       ],
-      'year': '2023',
+      'year': '2025',
     },
     {
-      'title': 'DevOps Automation Suite',
+      'title': 'Road Damage Detection System',
       'category': 'software',
       'description':
-          'Built comprehensive CI/CD pipeline automation tools with deployment orchestration and monitoring capabilities.',
-      'tech': ['Python', 'Jenkins', 'Ansible', 'Terraform', 'Grafana'],
+          'AI-powered defect detection using YOLOv7 and Vision Transformers.',
+      'tech': ['Python', 'PyTorch', 'Docker', 'CUDA'],
       'highlights': [
-        'Reduced deployment time by 75%',
-        'Zero-downtime deployments',
-        'Multi-cloud support',
+        '1.5x model speed improvement',
+        'Real-time detection',
+        'Scalable Docker deployment',
       ],
-      'year': '2024',
+      'year': '2025',
+    },
+    {
+      'title': 'Bus Reservation System',
+      'category': 'software',
+      'description': 'State-level hackathon winning optimization system.',
+      'tech': ['Java', 'MySQL', 'REST APIs'],
+      'highlights': [
+        'Won state-level hackathon',
+        'Optimized efficiency',
+        'Scalable architecture',
+      ],
+      'year': '2022',
+    },
+    {
+      'title': 'Disaster Monitoring Web App',
+      'category': 'application',
+      'description':
+          'Real-time disaster tracking developed during NASA Space Apps Hackathon.',
+      'tech': ['React', 'Node.js', 'PostgreSQL'],
+      'highlights': [
+        '24-hour hackathon project',
+        'Real-time monitoring',
+        'NASA Space Apps Hackathon',
+      ],
+      'year': '2023',
     },
   ];
 
   final Map<String, List<String>> skills = {
-    'Languages': [
-      'Java',
+    'Programming Languages': [
       'Python',
-      'C#',
-      'JavaScript',
-      'TypeScript',
-      'Go',
+      'Flutter',
+      'Java',
       'Kotlin',
+      'PHP',
+      'C++',
     ],
-    'Frameworks': [
-      'Spring Boot',
-      '.NET Core',
-      'React',
-      'Angular',
+    'Databases': ['MySQL', 'PostgreSQL', 'Firebase', 'MongoDB'],
+    'AI/ML Frameworks': [
+      'PyTorch',
+      'TensorFlow',
+      'Scikit-learn',
+      'CUDA',
+      'TensorRT',
+      'vLLM',
+    ],
+    'Software Development': [
+      'RESTful APIs',
       'Node.js',
-      'FastAPI',
-      'React Native',
+      'React.js',
+      'Next.js',
+      'TypeScript',
+      'Microservices',
     ],
-    'Databases': ['PostgreSQL', 'MongoDB', 'MySQL', 'Redis', 'Elasticsearch'],
-    'Tools': [
+    'Cloud & DevOps': [
       'Docker',
       'Kubernetes',
       'Jenkins',
-      'Git',
       'AWS',
-      'Azure',
-      'Terraform',
+      'Azure DevOps',
+      'CI/CD',
     ],
-    'Specializations': [
-      'Microservices',
-      'Cloud Architecture',
-      'Mobile Development',
-      'DevOps',
-      'System Design',
-    ],
+    'Data & Analytics': ['Spark', 'ETL', 'AWS Glue', 'Power BI', 'Tableau'],
   };
+
+  final List<Map<String, dynamic>> education = [
+    {
+      'degree': 'Master of Science in Computer Science',
+      'school': 'Texas A&M University – Corpus Christi',
+      'location': 'Texas, USA',
+      'period': 'January 2024 – December 2025',
+      'icon': Icons.school,
+    },
+    {
+      'degree': 'Bachelor of Technology in Computer Science & Engineering',
+      'school': 'Jawaharlal Nehru Technological University Hyderabad',
+      'location': 'India',
+      'period': 'August 2019 – August 2023',
+      'icon': Icons.school,
+    },
+  ];
+
+  final List<Map<String, dynamic>> experience = [
+    {
+      'role': 'Teaching Assistant – Dept. Computer Science',
+      'company': 'Texas A&M University–Corpus Christi',
+      'location': 'Texas',
+      'period': 'August 2025 – Present',
+      'achievements': [
+        'Guided 50+ undergraduate students in Python and C++, emphasizing Data Structures, Algorithms (DSA), and OOP.',
+        'Designed and graded algorithmic assignments using automated Python testing scripts, ensuring 100% accuracy.',
+      ],
+    },
+    {
+      'role': 'Android Development Intern (Flutter)',
+      'company': 'Liveasy',
+      'location': 'India',
+      'period': 'November 2022 – March 2023',
+      'achievements': [
+        'Built cross-platform logistics app in Flutter, reusing 70% of code across Android and Web platforms.',
+        'Applied Material You UI principles, boosting user engagement by 20% in beta testing.',
+      ],
+    },
+    {
+      'role': 'Front End Development Intern',
+      'company': 'Yugam.Inc',
+      'location': 'India',
+      'period': 'March 2022 – August 2022',
+      'achievements': [
+        'Designed responsive React.js interfaces integrated with Node.js APIs and PostgreSQL.',
+        'Built reusable UI components using React Hooks and Redux, reducing build time by 25%.',
+      ],
+    },
+  ];
+
+  final List<Map<String, String>> publications = [
+    {
+      'title':
+          'ABNet: Adaptive Balanced Network for Multiscale Object Detection in Remote Sensing Imagery',
+      'journal':
+          'International Journal for Innovative Engineering and Management Research (IJEMR)',
+      'details': 'Volume-12, Issue-06',
+      'year': '2023',
+    },
+  ];
+
+  final List<String> certifications = [
+    'Completed all levels in Google Cloud Facilitator program - 2020',
+    'Certified in "Data Structures" authorized by University of California San Diego and HSE University',
+    'Won a state-level hackathon for developing an optimized Bus Reservation System',
+    'Developed a web application during 24-hour NASA Space Apps Hackathon',
+  ];
 
   List<Map<String, dynamic>> get filteredProjects {
     if (activeTab == 'all') return projects;
     return projects.where((p) => p['category'] == activeTab).toList();
   }
 
-  // Init
+  // --- Init ---
   @override
   void initState() {
     super.initState();
     _fadeController.forward();
     _slideController.forward();
     _scaleController.forward();
-
     _scrollController.addListener(_onScroll);
+
+    // Auto-scroll the showcase
+    Future.delayed(const Duration(seconds: 5), _autoScrollShowcase);
   }
 
-  // Dispose
+  void _autoScrollShowcase() {
+    if (!mounted) return;
+    final next = (_currentShowcaseIndex + 1) % showcaseProjects.length;
+    _showcaseController.animateToPage(
+      next,
+      duration: const Duration(milliseconds: 800),
+      curve: Curves.easeInOut,
+    );
+    Future.delayed(const Duration(seconds: 5), _autoScrollShowcase);
+  }
+
+  // --- Dispose ---
   @override
   void dispose() {
     _fadeController.dispose();
     _slideController.dispose();
     _scaleController.dispose();
     _scrollController.dispose();
+    _showcaseController.dispose();
     super.dispose();
   }
 
-  bool _isOverFooter = false;
-
-  // Scroll handling
+  // --- Scroll handling ---
   void _onScroll() {
     _checkSectionVisibility('about', _aboutKey);
+    _checkSectionVisibility('education', _educationKey);
+    _checkSectionVisibility('experience', _experienceKey);
     _checkSectionVisibility('skills', _skillsKey);
     _checkSectionVisibility('projects', _projectsKey);
+    _checkSectionVisibility('publications', _publicationsKey);
     _checkSectionVisibility('certifications', _certificationsKey);
     _checkSectionVisibility('contact', _contactKey);
 
-    // show scroll to top after some offset
     final show = _scrollController.offset > 300;
     if (show != _showToTop) setState(() => _showToTop = show);
 
-    // active bottom nav index based on nearest section header
     final index = _detectActiveSectionIndex();
     if (index != _activeBottomIndex) setState(() => _activeBottomIndex = index);
 
-    // detect footer proximity
     final maxScroll = _scrollController.position.maxScrollExtent;
     final current = _scrollController.position.pixels;
-    final atFooter = current > maxScroll - 200; // within ~200px of bottom
-
-    if (atFooter != _isOverFooter) {
-      setState(() => _isOverFooter = atFooter);
-    }
+    final atFooter = current > maxScroll - 200;
+    if (atFooter != _isOverFooter) setState(() => _isOverFooter = atFooter);
   }
 
   int _detectActiveSectionIndex() {
-    final sections = [
+    // map only sections that are present in the bottom nav
+    final navSections = [
       _homeKey,
       _aboutKey,
+      _educationKey,
+      _experienceKey,
       _skillsKey,
       _projectsKey,
-      _certificationsKey,
       _contactKey,
     ];
-    for (int i = 0; i < sections.length; i++) {
-      final c = sections[i].currentContext;
+    for (int i = 0; i < navSections.length; i++) {
+      final c = navSections[i].currentContext;
       if (c == null) continue;
       final rb = c.findRenderObject() as RenderBox?;
       if (rb == null) continue;
@@ -271,7 +382,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
         return i;
       }
     }
-    return _activeBottomIndex;
+    return _activeBottomIndex.clamp(0, navSections.length - 1);
   }
 
   void _checkSectionVisibility(String section, GlobalKey key) {
@@ -286,7 +397,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
     }
   }
 
-  // Utils
+  // --- Utils ---
   double _pad(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
     if (w < 600) return 20;
@@ -318,7 +429,6 @@ class _PortfolioHomeState extends State<PortfolioHome>
     return 280;
   }
 
-  // Scroll to specific section
   void _scrollToSection(GlobalKey key) {
     final c = key.currentContext;
     if (c == null) return;
@@ -331,32 +441,19 @@ class _PortfolioHomeState extends State<PortfolioHome>
 
   static const double kBottomNavHeight = 64;
 
+  // --- Build ---
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: Colors.white,
-      // keep only a minimal top bar title; remove text nav items
       body: Stack(
         children: [
           CustomScrollView(
             controller: _scrollController,
             slivers: [
-              SliverAppBar(
-                floating: true,
-                pinned: true,
-                elevation: 2,
-                backgroundColor: Colors.white.withValues(alpha: 0.95),
-                title: const Text(
-                  'Siva Kanth Reddy',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22,
-                  ),
-                ),
-              ),
+              _buildEnhancedAppBar(),
               SliverToBoxAdapter(
                 child: Container(key: _homeKey, child: _buildHero(width)),
               ),
@@ -364,10 +461,26 @@ class _PortfolioHomeState extends State<PortfolioHome>
                 child: Container(key: _aboutKey, child: _buildAbout()),
               ),
               SliverToBoxAdapter(
+                child: Container(key: _educationKey, child: _buildEducation()),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  key: _experienceKey,
+                  child: _buildExperience(),
+                ),
+              ),
+              SliverToBoxAdapter(
                 child: Container(key: _skillsKey, child: _buildSkills()),
               ),
               SliverToBoxAdapter(
                 child: Container(key: _projectsKey, child: _buildProjects()),
+              ),
+              SliverToBoxAdapter(child: _buildProjectShowcase()),
+              SliverToBoxAdapter(
+                child: Container(
+                  key: _publicationsKey,
+                  child: _buildPublications(),
+                ),
               ),
               SliverToBoxAdapter(
                 child: Container(key: _certificationsKey, child: _buildCerts()),
@@ -395,19 +508,24 @@ class _PortfolioHomeState extends State<PortfolioHome>
                     () => _scrollToSection(_aboutKey),
                   ),
                   NavItem(
+                    'Education',
+                    Icons.school,
+                    () => _scrollToSection(_educationKey),
+                  ),
+                  NavItem(
+                    'Experience',
+                    Icons.work,
+                    () => _scrollToSection(_experienceKey),
+                  ),
+                  NavItem(
                     'Skills',
                     Icons.build,
                     () => _scrollToSection(_skillsKey),
                   ),
                   NavItem(
                     'Projects',
-                    Icons.work,
+                    Icons.code,
                     () => _scrollToSection(_projectsKey),
-                  ),
-                  NavItem(
-                    'Certs',
-                    Icons.verified,
-                    () => _scrollToSection(_certificationsKey),
                   ),
                   NavItem(
                     'Contact',
@@ -419,7 +537,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
             ),
           ),
 
-          // Scroll-to-top button (bottom-right)
+          // Scroll-to-top button (bottom-right, kept above the nav)
           Positioned(
             right: 16,
             bottom: 16 + kBottomNavHeight,
@@ -434,8 +552,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
                     curve: Curves.easeInOut,
                   );
                 },
-                // pass dynamic color flag
-                isWhite: _isOverFooter,
+                isWhite: _isOverFooter, // switch background over dark footer
               ),
             ),
           ),
@@ -444,11 +561,99 @@ class _PortfolioHomeState extends State<PortfolioHome>
     );
   }
 
+  // --- Enhanced App Bar ---
+  Widget _buildEnhancedAppBar() {
+    return SliverAppBar(
+      floating: true,
+      pinned: true,
+      elevation: 0,
+      backgroundColor: Colors.white.withOpacity(0.98),
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.white, Colors.blue.shade50.withOpacity(0.3)],
+          ),
+          border: Border(
+            bottom: BorderSide(color: Colors.blue.shade100, width: 1.5),
+          ),
+        ),
+      ),
+      title: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.blue.shade600, Colors.indigo.shade600],
+              ),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.blue.shade200,
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: const Center(
+              child: Text(
+                'SK',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Siva Kanth Reddy',
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              Text(
+                'Application & Software Developer',
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      actions: [
+        _AppBarAction(
+          icon: Icons.code,
+          onTap: () => _launchURL('https://github.com/sivakanth1'),
+        ),
+        _AppBarAction(
+          icon: Icons.business,
+          onTap: () => _launchURL('https://www.linkedin.com/in/sivakanth1'),
+        ),
+        _AppBarAction(
+          icon: Icons.email,
+          onTap: () => _launchURL('mailto:k.l.sivakanthreddy01@gmail.com'),
+        ),
+        const SizedBox(width: 8),
+      ],
+    );
+  }
+
   // ---------- Sections ----------
 
   Widget _buildHero(double width) {
     final isMobile = width < 600;
-    final isTablet = width >= 600 && width < 1024;
 
     return FadeTransition(
       opacity: _fadeAnimation,
@@ -561,7 +766,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
                 color: color,
                 boxShadow: [
                   BoxShadow(
-                    color: color.withValues(alpha: 0.3),
+                    color: color.withOpacity(0.3),
                     blurRadius: 100,
                     spreadRadius: 50,
                   ),
@@ -585,7 +790,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
             borderRadius: BorderRadius.circular(size * 0.1),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.2),
+                color: Colors.black.withOpacity(0.2),
                 blurRadius: 40,
                 offset: const Offset(0, 20),
               ),
@@ -662,8 +867,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
               child: const Text(
                 'Siva Kanth Reddy',
                 style: TextStyle(
-                  fontSize:
-                      48, // bigger on desktop; auto-scales by layout on mobile via wrapping
+                  fontSize: 48,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                   height: 1.2,
@@ -786,11 +990,11 @@ class _PortfolioHomeState extends State<PortfolioHome>
 
   Widget _aboutBox() {
     final bullets = [
-      'Passionate application and software developer with expertise in building scalable, enterprise-grade solutions',
-      'Specialized in full-stack development, cloud architecture, and modern DevOps practices',
-      'Strong problem-solving skills with a focus on writing clean, maintainable, and efficient code',
-      'Experienced in agile methodologies, leading development teams, and delivering projects on time',
-      'Committed to continuous learning and staying updated with emerging technologies and industry best practices',
+      'Teaching Assistant at Texas A&M University, guiding 50+ students in Python, C++, Data Structures, and Algorithms.',
+      'Experienced in full-stack development, AI/ML, and cloud technologies with expertise in Python, Flutter, and Java.',
+      'Specialized in building scalable applications with modern frameworks including React, Node.js, and Next.js.',
+      'Proficient in AI/ML frameworks like PyTorch, TensorFlow, and CUDA for high-performance computing.',
+      'Strong DevOps skills with Docker, Kubernetes, AWS, and CI/CD pipeline implementation.',
     ];
 
     return AnimatedContainer(
@@ -802,7 +1006,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
@@ -840,6 +1044,70 @@ class _PortfolioHomeState extends State<PortfolioHome>
             ),
           );
         }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildEducation() {
+    return _Appear(
+      isVisible: _sectionVisibility['education']!,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 80, horizontal: _pad(context)),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.grey.shade50, Colors.white],
+          ),
+        ),
+        child: Column(
+          children: [
+            const Text(
+              'Education',
+              style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Academic Background',
+              style: TextStyle(fontSize: 18, color: Colors.grey.shade600),
+            ),
+            const SizedBox(height: 36),
+            ...education.map((edu) => _EducationCard(education: edu)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildExperience() {
+    return _Appear(
+      isVisible: _sectionVisibility['experience']!,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 80, horizontal: _pad(context)),
+        color: Colors.white,
+        child: Column(
+          children: [
+            const Text(
+              'Work Experience',
+              style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'My professional journey',
+              style: TextStyle(fontSize: 18, color: Colors.grey.shade600),
+            ),
+            const SizedBox(height: 36),
+            ...experience.map((exp) => _ExperienceCard(experience: exp)),
+          ],
+        ),
       ),
     );
   }
@@ -916,7 +1184,6 @@ class _PortfolioHomeState extends State<PortfolioHome>
               style: TextStyle(fontSize: 18, color: Colors.grey.shade600),
             ),
             const SizedBox(height: 28),
-            // ——— ALWAYS inline pills (no full-width stacked bars) ———
             Wrap(
               alignment: WrapAlignment.center,
               spacing: 16,
@@ -961,13 +1228,102 @@ class _PortfolioHomeState extends State<PortfolioHome>
     );
   }
 
+  // NEW Showcase (left image/title, right details) – below existing projects
+  Widget _buildProjectShowcase() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 80, horizontal: _pad(context)),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Colors.grey.shade50, Colors.white],
+        ),
+      ),
+      child: Column(
+        children: [
+          const Text(
+            'Project Showcase',
+            style: TextStyle(
+              fontSize: 40,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Interactive project highlights',
+            style: TextStyle(fontSize: 18, color: Colors.grey.shade600),
+          ),
+          const SizedBox(height: 36),
+          SizedBox(
+            height: MediaQuery.of(context).size.width < 900 ? 600 : 450,
+            child: PageView.builder(
+              controller: _showcaseController,
+              onPageChanged: (index) {
+                setState(() => _currentShowcaseIndex = index);
+              },
+              itemCount: showcaseProjects.length,
+              itemBuilder: (context, index) {
+                return _ShowcaseCard(
+                  project: showcaseProjects[index],
+                  isMobile: MediaQuery.of(context).size.width < 900,
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              showcaseProjects.length,
+              (index) => Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                width: _currentShowcaseIndex == index ? 24 : 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: _currentShowcaseIndex == index
+                      ? Colors.blue.shade600
+                      : Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPublications() {
+    return _Appear(
+      isVisible: _sectionVisibility['publications']!,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 80, horizontal: _pad(context)),
+        color: Colors.white,
+        child: Column(
+          children: [
+            const Text(
+              'Publications',
+              style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Research contributions',
+              style: TextStyle(fontSize: 18, color: Colors.grey.shade600),
+            ),
+            const SizedBox(height: 36),
+            ...publications.map((pub) => _PublicationCard(publication: pub)),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildCerts() {
-    final certs = [
-      'AWS Certified Solutions Architect',
-      'Oracle Certified Professional Java Developer',
-      'Microsoft Certified: Azure Developer Associate',
-      'Certified Kubernetes Application Developer',
-    ];
     return _Appear(
       isVisible: _sectionVisibility['certifications']!,
       child: Container(
@@ -982,7 +1338,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
         child: Column(
           children: [
             const Text(
-              'Certifications',
+              'Certifications & Achievements',
               style: TextStyle(
                 fontSize: 40,
                 fontWeight: FontWeight.bold,
@@ -991,7 +1347,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
             ),
             const SizedBox(height: 12),
             Text(
-              'Professional credentials and achievements',
+              'Professional credentials and accomplishments',
               style: TextStyle(fontSize: 18, color: Colors.grey.shade600),
             ),
             const SizedBox(height: 36),
@@ -1000,7 +1356,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
                 spacing: 20,
                 runSpacing: 20,
                 alignment: WrapAlignment.center,
-                children: certs
+                children: certifications
                     .map(
                       (c) =>
                           _CertCard(title: c, width: _certWidth(cons.maxWidth)),
@@ -1092,6 +1448,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
         left: 32,
         right: 32,
         top: 32,
+        // space so floating nav never covers the footer text
         bottom: kBottomNavHeight + 32 + bottomSafe,
       ),
       color: Colors.grey.shade900,
@@ -1103,9 +1460,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
     );
   }
 
-  // Launch URL stub
   void _launchURL(String url) {
-    // For real links, wire url_launcher as you did before.
     debugPrint('Launching: $url');
   }
 }
@@ -1177,6 +1532,28 @@ class _AppearState extends State<_Appear> with SingleTickerProviderStateMixin {
   );
 }
 
+class _AppBarAction extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _AppBarAction({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          child: Icon(icon, color: Colors.grey.shade700, size: 20),
+        ),
+      ),
+    );
+  }
+}
+
 class _Button extends StatefulWidget {
   final String label;
   final IconData icon;
@@ -1238,7 +1615,7 @@ class _ButtonState extends State<_Button> with SingleTickerProviderStateMixin {
               boxShadow: _hover && widget.isPrimary
                   ? [
                       BoxShadow(
-                        color: Colors.grey.shade900.withValues(alpha: 0.28),
+                        color: Colors.grey.shade900.withOpacity(0.28),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),
@@ -1316,7 +1693,7 @@ class _SocialState extends State<_Social> with SingleTickerProviderStateMixin {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: Colors.black.withOpacity(0.1),
                     blurRadius: 15,
                     offset: const Offset(0, 5),
                   ),
@@ -1331,8 +1708,581 @@ class _SocialState extends State<_Social> with SingleTickerProviderStateMixin {
   }
 }
 
-// Skill card
-// Skill Card
+class _EducationCard extends StatelessWidget {
+  final Map<String, dynamic> education;
+  const _EducationCard({required this.education});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: Colors.blue.shade100,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              education['icon'] as IconData,
+              color: Colors.blue.shade600,
+              size: 28,
+            ),
+          ),
+          const SizedBox(width: 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  education['degree'],
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  education['school'],
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.blue.shade600,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      size: 14,
+                      color: Colors.grey.shade600,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      education['location'],
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Icon(
+                      Icons.calendar_today,
+                      size: 14,
+                      color: Colors.grey.shade600,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      education['period'],
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ExperienceCard extends StatelessWidget {
+  final Map<String, dynamic> experience;
+  const _ExperienceCard({required this.experience});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      experience['role'],
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      experience['company'],
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.blue.shade600,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  experience['period'],
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade700,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...(experience['achievements'] as List).map(
+            (achievement) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 6,
+                    height: 6,
+                    margin: const EdgeInsets.only(top: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade600,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      achievement,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey.shade700,
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PublicationCard extends StatelessWidget {
+  final Map<String, String> publication;
+  const _PublicationCard({required this.publication});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade100,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.article,
+                  color: Colors.green.shade600,
+                  size: 28,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      publication['title']!,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      publication['journal']!,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.blue.shade600,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            '${publication['details']} • ${publication['year']}',
+            style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ShowcaseCard extends StatelessWidget {
+  final Map<String, dynamic> project;
+  final bool isMobile;
+
+  const _ShowcaseCard({required this.project, required this.isMobile});
+
+  @override
+  Widget build(BuildContext context) {
+    if (isMobile) {
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.blue.shade400, Colors.indigo.shade600],
+                ),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
+              ),
+              child: Center(
+                child: Icon(
+                  Icons.code,
+                  size: 80,
+                  color: Colors.white.withOpacity(0.3),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      project['title'],
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      project['period'],
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Text(
+                          '${project['description']}\n\n${project['details']}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade700,
+                            height: 1.5,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: (project['tech'] as List).map((tech) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.shade50,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            tech,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.blue.shade700,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(Icons.code, size: 16),
+                      label: const Text('View on GitHub'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey.shade900,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 40),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 30,
+            offset: const Offset(0, 15),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Container(
+              height: 450,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Colors.blue.shade400, Colors.indigo.shade600],
+                ),
+                borderRadius: const BorderRadius.horizontal(
+                  left: Radius.circular(20),
+                ),
+              ),
+              child: Stack(
+                children: [
+                  Center(
+                    child: Icon(
+                      Icons.code,
+                      size: 120,
+                      color: Colors.white.withOpacity(0.2),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 20,
+                    left: 20,
+                    right: 20,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          project['title'],
+                          style: const TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          project['period'],
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.white70,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Padding(
+              padding: const EdgeInsets.all(40),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Project Details',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    project['description'],
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87,
+                      height: 1.6,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    project['details'],
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey.shade700,
+                      height: 1.6,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Technologies Used',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: (project['tech'] as List).map((tech) {
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.blue.shade200),
+                        ),
+                        child: Text(
+                          tech,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.blue.shade700,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.code, size: 18),
+                    label: const Text('View on GitHub'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey.shade900,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 14,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _SkillCard extends StatefulWidget {
   final String title;
   final List<String> skills;
@@ -1475,37 +2425,33 @@ class __SkillCardState extends State<_SkillCard>
     IconData icon;
     Color color;
 
-    switch (category) {
-      case 'Languages':
-        icon = Icons.code;
-        color = Colors.blue.shade600;
-        break;
-      case 'Frameworks':
-        icon = Icons.layers;
-        color = Colors.green.shade600;
-        break;
-      case 'Databases':
-        icon = Icons.storage;
-        color = Colors.purple.shade600;
-        break;
-      case 'Tools':
-        icon = Icons.build;
-        color = Colors.orange.shade600;
-        break;
-      case 'Specializations':
-        icon = Icons.star;
-        color = Colors.pink.shade600;
-        break;
-      default:
-        icon = Icons.computer;
-        color = Colors.grey.shade600;
+    if (category.contains('Programming')) {
+      icon = Icons.code;
+      color = Colors.blue.shade600;
+    } else if (category.contains('Database')) {
+      icon = Icons.storage;
+      color = Colors.purple.shade600;
+    } else if (category.contains('AI/ML')) {
+      icon = Icons.psychology;
+      color = Colors.green.shade600;
+    } else if (category.contains('Software')) {
+      icon = Icons.layers;
+      color = Colors.orange.shade600;
+    } else if (category.contains('Cloud')) {
+      icon = Icons.cloud;
+      color = Colors.indigo.shade600;
+    } else if (category.contains('Data')) {
+      icon = Icons.bar_chart;
+      color = Colors.pink.shade600;
+    } else {
+      icon = Icons.computer;
+      color = Colors.grey.shade600;
     }
 
     return Icon(icon, color: color, size: 24);
   }
 }
 
-// Project card
 class _ProjectCard extends StatefulWidget {
   final Map<String, dynamic> project;
   final double width;
@@ -1559,7 +2505,7 @@ class _ProjectCardState extends State<_ProjectCard>
               border: Border.all(color: Colors.grey.shade200),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: _hover ? 0.18 : 0.08),
+                  color: Colors.black.withOpacity(_hover ? 0.18 : 0.08),
                   blurRadius: _hover ? 36 : 20,
                   offset: const Offset(0, 12),
                 ),
@@ -1708,7 +2654,6 @@ class _ProjectCardState extends State<_ProjectCard>
   );
 }
 
-// Filter pill styled like your screenshot
 class _FilterPill extends StatefulWidget {
   final String label;
   final bool isActive;
@@ -1729,9 +2674,7 @@ class _FilterPillState extends State<_FilterPill> {
   @override
   Widget build(BuildContext context) {
     final active = widget.isActive;
-    final bg = active
-        ? Colors.black87
-        : Colors.grey.shade100; // light gray background for inactive
+    final bg = active ? Colors.black87 : Colors.grey.shade100;
     final fg = active ? Colors.white : Colors.grey.shade900;
     final border = active ? null : Border.all(color: Colors.grey.shade200);
 
@@ -1750,9 +2693,7 @@ class _FilterPillState extends State<_FilterPill> {
             boxShadow: active || _hover
                 ? [
                     BoxShadow(
-                      color: Colors.black.withValues(
-                        alpha: active ? 0.28 : 0.08,
-                      ),
+                      color: Colors.black.withOpacity(active ? 0.28 : 0.08),
                       blurRadius: active ? 18 : 10,
                       offset: const Offset(0, 6),
                     ),
@@ -1769,7 +2710,6 @@ class _FilterPillState extends State<_FilterPill> {
   }
 }
 
-// Cert & Contact cards
 class _CertCard extends StatelessWidget {
   final String title;
   final double width;
@@ -1786,7 +2726,7 @@ class _CertCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
+            color: Colors.black.withOpacity(0.08),
             blurRadius: 18,
             offset: const Offset(0, 10),
           ),
@@ -1802,7 +2742,7 @@ class _CertCard extends StatelessWidget {
               style: const TextStyle(
                 color: Colors.black87,
                 fontWeight: FontWeight.w600,
-                fontSize: 16,
+                fontSize: 14,
               ),
             ),
           ),
@@ -1851,7 +2791,7 @@ class _ContactCardState extends State<_ContactCard> {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: _hover ? 0.12 : 0.06),
+                color: Colors.black.withOpacity(_hover ? 0.12 : 0.06),
                 blurRadius: _hover ? 24 : 12,
                 offset: Offset(0, _hover ? 12 : 6),
               ),
@@ -1901,8 +2841,6 @@ class _ContactCardState extends State<_ContactCard> {
   }
 }
 
-// ------------- Floating bottom navigation -------------
-
 class NavItem {
   final String label;
   final IconData icon;
@@ -1919,25 +2857,24 @@ class _FloatingNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
-    final showLabels = w >= 480; // icons-only below 480px
+    final showLabels = w >= 480; // icons only on very small screens
     final maxBarWidth = w.clamp(280.0, 900.0);
 
     return Container(
       constraints: BoxConstraints(maxWidth: maxBarWidth),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
+        color: Colors.white.withOpacity(0.95),
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.12),
+            color: Colors.black.withOpacity(0.12),
             blurRadius: 24,
             offset: const Offset(0, 14),
           ),
         ],
         border: Border.all(color: Colors.grey.shade200),
       ),
-      // scroll horizontally when content is wider than bar (prevents overflow)
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
@@ -1992,7 +2929,6 @@ class _FloatingNavBar extends StatelessWidget {
   }
 }
 
-// Scroll to top FAB
 class _ScrollToTopButton extends StatelessWidget {
   final VoidCallback onTap;
   final bool isWhite;
