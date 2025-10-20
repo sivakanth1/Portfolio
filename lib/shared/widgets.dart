@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio/shared/shared.dart';
 
+//---------------- Appear ---------------------------//
 class Appear extends StatefulWidget {
   final Widget child;
   final bool isVisible;
@@ -42,25 +43,8 @@ class _AppearState extends State<Appear> with SingleTickerProviderStateMixin {
   );
 }
 
-// --- small atoms used across sections (same visuals as your code) ---
-class AppBarAction extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-  const AppBarAction({super.key, required this.icon, required this.onTap});
-  @override
-  Widget build(BuildContext context) => Material(
-    color: Colors.transparent,
-    child: InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Icon(icon, color: Colors.grey.shade700, size: 20),
-      ),
-    ),
-  );
-}
-
+//----------------End Appear ---------------------------//
+//--------------- Profile Image Shape Clipper -----------------------//
 class CustomShapeClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size s) {
@@ -84,8 +68,8 @@ class CustomShapeClipper extends CustomClipper<Path> {
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
 
-// You can keep your other atoms (Button, Social, SkillCard, ProjectCard, etc.) here too.
-// For brevity, you can copy-paste them from your current file into this file unchanged.
+//--------------- End Profile Image Shape Clipper -----------------------//
+//--------------- Profile section Button-----------------------//
 class Button extends StatefulWidget {
   final String label;
   final IconData icon;
@@ -182,6 +166,8 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
   }
 }
 
+//--------------- End Profile section Button-----------------------//
+//--------------- Social Icons -----------------------//
 class Social extends StatefulWidget {
   final Widget icon;
   final VoidCallback onPressed;
@@ -241,15 +227,20 @@ class _SocialState extends State<Social> with SingleTickerProviderStateMixin {
   }
 }
 
+//--------------- End Social Icons -----------------------//
+//--------------- EducationCard -----------------------//
 class EducationCard extends StatelessWidget {
   final Map<String, dynamic> education;
   const EducationCard({super.key, required this.education});
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final isMobile = width < 600;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(isMobile ? 16 : 24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -262,78 +253,96 @@ class EducationCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: Colors.blue.shade100,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              education['icon'] as IconData,
-              color: Colors.blue.shade600,
-              size: 28,
-            ),
-          ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  education['degree'],
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
+          // Header with icon
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: isMobile ? 40 : 50,
+                height: isMobile ? 40 : 50,
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade100,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  education['school'],
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.blue.shade600,
-                    fontWeight: FontWeight.w600,
-                  ),
+                child: Icon(
+                  education['icon'] as IconData,
+                  color: Colors.blue.shade600,
+                  size: isMobile ? 22 : 28,
                 ),
-                const SizedBox(height: 4),
-                Row(
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.location_on,
-                      size: 14,
-                      color: Colors.grey.shade600,
-                    ),
-                    const SizedBox(width: 4),
                     Text(
-                      education['location'],
+                      education['degree'],
                       style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey.shade600,
+                        fontSize: isMobile ? 16 : 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    Icon(
-                      Icons.calendar_today,
-                      size: 14,
-                      color: Colors.grey.shade600,
-                    ),
-                    const SizedBox(width: 4),
+                    const SizedBox(height: 6),
                     Text(
-                      education['period'],
+                      education['school'],
                       style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey.shade600,
+                        fontSize: isMobile ? 14 : 16,
+                        color: Colors.blue.shade600,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Location and Period - Wrap for mobile
+          Wrap(
+            spacing: 12,
+            runSpacing: 8,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.location_on,
+                    size: 14,
+                    color: Colors.grey.shade600,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    education['location'],
+                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.calendar_today,
+                    size: 14,
+                    color: Colors.grey.shade600,
+                  ),
+                  const SizedBox(width: 4),
+                  Flexible(
+                    child: Text(
+                      education['period'],
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade600,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
@@ -341,12 +350,16 @@ class EducationCard extends StatelessWidget {
   }
 }
 
+//--------------- End EducationCard -----------------------//
+//--------------- Experience Card -----------------------//
 class ExperienceCard extends StatelessWidget {
   final Map<String, dynamic> experience;
   const ExperienceCard({super.key, required this.experience});
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       padding: const EdgeInsets.all(28),
@@ -365,54 +378,103 @@ class ExperienceCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
+          // FIXED: Responsive layout for role and period
+          isMobile
+              ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       experience['role'],
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
+                        height: 1.3,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      experience['company'],
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.blue.shade600,
-                        fontWeight: FontWeight.w600,
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        experience['period'],
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade700,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            experience['role'],
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            experience['company'],
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.blue.shade600,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        experience['period'],
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade700,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
                 ),
+
+          // Company name for mobile (since it's in the column above for desktop)
+          if (isMobile) ...[
+            const SizedBox(height: 8),
+            Text(
+              experience['company'],
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.blue.shade600,
+                fontWeight: FontWeight.w600,
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  experience['period'],
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade700,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
+
           const SizedBox(height: 16),
           ...(experience['achievements'] as List).map(
             (achievement) => Padding(
@@ -450,6 +512,8 @@ class ExperienceCard extends StatelessWidget {
   }
 }
 
+//--------------- End Experience Card -----------------------//
+//--------------- Publication Card -----------------------//
 class PublicationCard extends StatelessWidget {
   final Map<String, String> publication;
   const PublicationCard({super.key, required this.publication});
@@ -552,6 +616,11 @@ class ShowcaseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ONLY CHANGE: Use mobile description if available, otherwise fall back to full description
+    final displayText = isMobile && project['mobileDescription'] != null
+        ? project['mobileDescription']
+        : '${project['description']}\n\n${project['details']}';
+
     if (isMobile) {
       return Container(
         margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -617,7 +686,7 @@ class ShowcaseCard extends StatelessWidget {
                     Expanded(
                       child: SingleChildScrollView(
                         child: Text(
-                          '${project['description']}\n\n${project['details']}',
+                          displayText, // ONLY CHANGE: Uses mobile description if available
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey.shade700,
@@ -670,6 +739,7 @@ class ShowcaseCard extends StatelessWidget {
       );
     }
 
+    // Desktop layout - COMPLETELY UNCHANGED from your original code
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 40),
       decoration: BoxDecoration(

@@ -5,6 +5,7 @@ class ProjectShowcase extends StatelessWidget {
   final PageController controller;
   final int currentIndex;
   final ValueChanged<int> onChanged;
+
   const ProjectShowcase({
     super.key,
     required this.controller,
@@ -12,10 +13,38 @@ class ProjectShowcase extends StatelessWidget {
     required this.onChanged,
   });
 
+  // NEW: Helper method for circular navigation
+  void _goToNextPage() {
+    final totalPages = AppData.showcaseProjects.length;
+    final nextIndex =
+        (currentIndex + 1) % totalPages; // Circular: wraps to 0 after last
+
+    controller.animateToPage(
+      nextIndex,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOut,
+    );
+  }
+
+  // NEW: Helper method for circular navigation
+  void _goToPreviousPage() {
+    final totalPages = AppData.showcaseProjects.length;
+    final prevIndex =
+        (currentIndex - 1 + totalPages) %
+        totalPages; // Circular: wraps to last from 0
+
+    controller.animateToPage(
+      prevIndex,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOut,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 900;
     final desktop = MediaQuery.of(context).size.width >= 1024;
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: 80, horizontal: pad(context)),
       decoration: BoxDecoration(
@@ -57,20 +86,22 @@ class ProjectShowcase extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              desktop
-                  ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Center(
-                        child: ArrowButton(
-                          icon: Icons.chevron_left,
-                          onTap: () => controller.previousPage(
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.easeOut,
-                          ),
-                        ),
-                      ),
-                    )
-                  : SizedBox(width: 2),
+              // Previous button (desktop only)
+              if (desktop)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
+                    child: ArrowButton(
+                      icon: Icons.chevron_left,
+                      onTap:
+                          _goToPreviousPage, // CHANGED: Use circular navigation
+                    ),
+                  ),
+                )
+              else
+                const SizedBox(width: 2),
+
+              // Page indicators
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
@@ -88,54 +119,22 @@ class ProjectShowcase extends StatelessWidget {
                   ),
                 ),
               ),
-              desktop
-                  ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Center(
-                        child: ArrowButton(
-                          icon: Icons.chevron_right,
-                          onTap: () => controller.nextPage(
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.easeOut,
-                          ),
-                        ),
-                      ),
-                    )
-                  : SizedBox(width: 2),
+
+              // Next button (desktop only)
+              if (desktop)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
+                    child: ArrowButton(
+                      icon: Icons.chevron_right,
+                      onTap: _goToNextPage, // CHANGED: Use circular navigation
+                    ),
+                  ),
+                )
+              else
+                const SizedBox(width: 2),
             ],
           ),
-
-          // desktop-only manual arrows (kept, no layout change)
-          // if (desktop) ...[
-          //   Positioned(
-          //     left: 8,
-          //     top: 0,
-          //     bottom: 0,
-          //     child: Center(
-          //       child: ArrowButton(
-          //         icon: Icons.chevron_left,
-          //         onTap: () => controller.previousPage(
-          //           duration: const Duration(milliseconds: 500),
-          //           curve: Curves.easeOut,
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          //   Positioned(
-          //     right: 8,
-          //     top: 0,
-          //     bottom: 0,
-          //     child: Center(
-          //       child: ArrowButton(
-          //         icon: Icons.chevron_right,
-          //         onTap: () => controller.nextPage(
-          //           duration: const Duration(milliseconds: 500),
-          //           curve: Curves.easeOut,
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ],
         ],
       ),
     );

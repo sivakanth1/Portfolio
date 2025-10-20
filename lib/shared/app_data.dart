@@ -2,14 +2,21 @@ import 'package:flutter/material.dart';
 
 /// =============== CENTRAL DATA ===============
 class AppData {
-  // showcase carousel
+  // showcase carousel - ADDED MOBILE DESCRIPTIONS
   static const showcaseProjects = <Map<String, dynamic>>[
     {
       'title': 'Dynamic Parallel Agentic Orchestration',
+      // Desktop/Full description
       'description':
           'Designing and implementing a multi-agent controller using AWS EC2 and Lambda to dynamically choose between data-parallel and instruction-parallel execution across multiple LLMs, improving throughput and reducing latency by up to 40%.',
+      // Mobile description - concise version
+      'mobileDescription':
+          'Built a multi-agent controller on AWS EC2 and Lambda for dynamic LLM execution, achieving 40% improved throughput and reduced latency across parallel processing modes.',
+      // Desktop/Full details
       'details':
           'Developed a Streamlit-based interface integrated with Python\'s asyncio for concurrent LLM API execution and result aggregation, enhancing performance, reliability, and scalability for AI-driven orchestration applications.',
+      // Mobile details - removed for cleaner mobile view (optional, keep if you want)
+      'mobileDetails': '',
       'tech': ['Python', 'AWS EC2', 'Lambda', 'Streamlit', 'asyncio', 'LLMs'],
       'period': 'September 2025 – Present',
       'github': 'https://github.com/sivakanth1',
@@ -17,10 +24,17 @@ class AppData {
     },
     {
       'title': 'SynerSched – Academic Scheduling & Collaboration App',
+      // Desktop/Full description
       'description':
           'Developed a Flutter app with Firebase backend that auto-generates conflict-free weekly schedules, improving users\' time-management efficiency by 30%.',
+      // Mobile description
+      'mobileDescription':
+          'Flutter app with Firebase backend for auto-generating conflict-free schedules, improving time management by 30% with bilingual support and real-time collaboration.',
+      // Desktop/Full details
       'details':
           'Implemented AES-256 encryption and secure Firebase integration, achieving zero data leakage in audits. Integrated bilingual support, dark/light themes, push notifications, and real-time collaboration features to enhance student engagement.',
+      // Mobile details
+      'mobileDetails': '',
       'tech': ['Flutter', 'Firebase', 'AES-256', 'Push Notifications'],
       'period': 'May 2025 – August 2025',
       'github': 'https://github.com/sivakanth1',
@@ -28,10 +42,17 @@ class AppData {
     },
     {
       'title': 'Detecting Road Damage from Aerial Imagery',
+      // Desktop/Full description
       'description':
           'Implemented YOLOv7, Faster R-CNN, and Vision Transformers using Python (PyTorch) for real-time defect detection.',
+      // Mobile description
+      'mobileDescription':
+          'Real-time road damage detection using YOLOv7, Faster R-CNN, and Vision Transformers with PyTorch, achieving 1.5x faster performance through CUDA optimization and Docker deployment.',
+      // Desktop/Full details
       'details':
           'Optimized training via mixed precision and CUDA, improving model speed by 1.5x. Containerized the complete inference pipeline using Docker, enabling scalable deployment and reproducibility.',
+      // Mobile details
+      'mobileDetails': '',
       'tech': ['Python', 'PyTorch', 'YOLOv7', 'Docker', 'CUDA'],
       'period': 'January 2025 – April 2025',
       'github': 'https://github.com/sivakanth1',
@@ -39,7 +60,7 @@ class AppData {
     },
   ];
 
-  // grid projects + filter
+  // grid projects + filter - KEEP AS IS (these are already short)
   static const projects = <Map<String, dynamic>>[
     {
       'title': 'Dynamic Parallel Agentic Orchestration',
@@ -107,6 +128,7 @@ class AppData {
     },
   ];
 
+  // KEEP EVERYTHING ELSE EXACTLY AS IS
   static const skills = <String, List<String>>{
     'Programming Languages': [
       'Python',

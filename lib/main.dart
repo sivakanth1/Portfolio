@@ -161,10 +161,10 @@ class _PortfolioHomeState extends State<PortfolioHome>
     final navSections = [
       _homeKey,
       _aboutKey,
-      _educationKey,
-      _experienceKey,
-      _skillsKey,
       _projectsKey,
+      _skillsKey,
+      _experienceKey,
+      _educationKey,
       _contactKey,
     ];
     for (int i = 0; i < navSections.length; i++) {
@@ -237,10 +237,18 @@ class _PortfolioHomeState extends State<PortfolioHome>
               ),
               SliverToBoxAdapter(
                 child: Container(
-                  key: _educationKey,
-                  child: EducationSection(
-                    visible: _sectionVisibility['education']!,
+                  key: _projectsKey,
+                  child: ProjectShowcase(
+                    controller: _showcase,
+                    currentIndex: _showIndex,
+                    onChanged: (i) => setState(() => _showIndex = i),
                   ),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  key: _skillsKey,
+                  child: SkillsSection(visible: _sectionVisibility['skills']!),
                 ),
               ),
               SliverToBoxAdapter(
@@ -249,12 +257,6 @@ class _PortfolioHomeState extends State<PortfolioHome>
                   child: ExperienceSection(
                     visible: _sectionVisibility['experience']!,
                   ),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Container(
-                  key: _skillsKey,
-                  child: SkillsSection(visible: _sectionVisibility['skills']!),
                 ),
               ),
               // SliverToBoxAdapter(
@@ -267,11 +269,9 @@ class _PortfolioHomeState extends State<PortfolioHome>
               // ),
               SliverToBoxAdapter(
                 child: Container(
-                  key: _projectsKey,
-                  child: ProjectShowcase(
-                    controller: _showcase,
-                    currentIndex: _showIndex,
-                    onChanged: (i) => setState(() => _showIndex = i),
+                  key: _educationKey,
+                  child: EducationSection(
+                    visible: _sectionVisibility['education']!,
                   ),
                 ),
               ),
@@ -319,14 +319,9 @@ class _PortfolioHomeState extends State<PortfolioHome>
                     () => _scrollToSection(_aboutKey),
                   ),
                   NavItem(
-                    'Education',
-                    Icons.school,
-                    () => _scrollToSection(_educationKey),
-                  ),
-                  NavItem(
-                    'Experience',
-                    Icons.work,
-                    () => _scrollToSection(_experienceKey),
+                    'Projects',
+                    Icons.code,
+                    () => _scrollToSection(_projectsKey),
                   ),
                   NavItem(
                     'Skills',
@@ -334,9 +329,14 @@ class _PortfolioHomeState extends State<PortfolioHome>
                     () => _scrollToSection(_skillsKey),
                   ),
                   NavItem(
-                    'Projects',
-                    Icons.code,
-                    () => _scrollToSection(_projectsKey),
+                    'Experience',
+                    Icons.work,
+                    () => _scrollToSection(_experienceKey),
+                  ),
+                  NavItem(
+                    'Education',
+                    Icons.school,
+                    () => _scrollToSection(_educationKey),
                   ),
                   NavItem(
                     'Contact',
