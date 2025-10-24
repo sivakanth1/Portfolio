@@ -235,4 +235,13 @@ class AppData {
     'Won a state-level hackathon for developing an optimized Bus Reservation System',
     'Developed a web application during 24-hour NASA Space Apps Hackathon',
   ];
+
+  // About Me Content
+  static const aboutMe = <String>[
+    'I\'m a Computer Science graduate student at Texas A&M University–Corpus Christi, driven by a passion for building solutions that bridge research and real-world impact. My journey began at age 12 with a love for solving math problems where curiosity evolved into creating optimized, scalable technology.',
+    'What excites me most is finding better ways to solve problems. Whether it\'s accelerating a road damage detection model by 1.5x with CUDA, building a Flutter app that improves time management by 30%, or orchestrating LLMs to boost throughput by 40%, I focus on measurable results. My experience spans mobile development, AI/ML systems, and cloud infrastructure, giving me a versatile perspective on full-stack engineering.',
+    'I\'m currently exploring LLM applications and don\'t limit myself to one domain. I adapt to where I can make the most impact, whether in healthcare, education, or infrastructure optimization.',
+    'Beyond coding, you\'ll find me playing badminton, following Formula 1 racing, or competing in hackathons. As a Teaching Assistant, I also help students master algorithms and data structures.',
+    'I\'m seeking opportunities in Software Engineering, ML Engineering, or Full-Stack Development where I can contribute to innovative projects and grow alongside evolving technology.',
+  ];
 }

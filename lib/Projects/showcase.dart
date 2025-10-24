@@ -57,18 +57,18 @@ class ProjectShowcase extends StatelessWidget {
       child: Column(
         children: [
           const Text(
-            'Project Showcase',
+            'Projects I have worked on',
             style: TextStyle(
               fontSize: 40,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
             ),
           ),
-          const SizedBox(height: 12),
-          Text(
-            'Interactive project highlights',
-            style: TextStyle(fontSize: 18, color: Colors.grey.shade600),
-          ),
+          // const SizedBox(height: 12),
+          // Text(
+          //   'Projects I have worked on',
+          //   style: TextStyle(fontSize: 18, color: Colors.grey.shade600),
+          // ),
           const SizedBox(height: 36),
           SizedBox(
             height: isMobile ? 600 : 450,

@@ -229,122 +229,192 @@ class _SocialState extends State<Social> with SingleTickerProviderStateMixin {
 
 //--------------- End Social Icons -----------------------//
 //--------------- EducationCard -----------------------//
-class EducationCard extends StatelessWidget {
+class EducationCard extends StatefulWidget {
   final Map<String, dynamic> education;
   const EducationCard({super.key, required this.education});
 
   @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final isMobile = width < 600;
+  State<EducationCard> createState() => _EducationCardState();
+}
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      padding: EdgeInsets.all(isMobile ? 16 : 24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with icon
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: isMobile ? 40 : 50,
-                height: isMobile ? 40 : 50,
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade100,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  education['icon'] as IconData,
-                  color: Colors.blue.shade600,
-                  size: isMobile ? 22 : 28,
-                ),
+class _EducationCardState extends State<EducationCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  bool _isHovered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _animation = Tween<double>(
+      begin: 0.0,
+      end: -8.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) {
+        setState(() => _isHovered = true);
+        _controller.forward();
+      },
+      onExit: (_) {
+        setState(() => _isHovered = false);
+        _controller.reverse();
+      },
+      child: AnimatedBuilder(
+        animation: _animation,
+        builder: (context, child) {
+          return Transform.translate(
+            offset: Offset(0, _animation.value),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              height: 240,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey.shade200),
+                boxShadow: _isHovered
+                    ? [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.15),
+                          blurRadius: 30,
+                          offset: const Offset(0, 15),
+                        ),
+                      ]
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 15,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      education['degree'],
-                      style: TextStyle(
-                        fontSize: isMobile ? 16 : 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      education['school'],
-                      style: TextStyle(
-                        fontSize: isMobile ? 14 : 16,
-                        color: Colors.blue.shade600,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          // Location and Period - Wrap for mobile
-          Wrap(
-            spacing: 12,
-            runSpacing: 8,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
-                    Icons.location_on,
-                    size: 14,
-                    color: Colors.grey.shade600,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.blue.shade200),
+                        ),
+                        child: Icon(
+                          widget.education['icon'] as IconData,
+                          color: Colors.blue.shade600,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.education['degree'],
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                                height: 1.3,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(height: 12),
                   Text(
-                    education['location'],
-                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                    widget.education['school'],
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.blue.shade600,
+                      fontWeight: FontWeight.w600,
+                      height: 1.4,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ],
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.calendar_today,
-                    size: 14,
-                    color: Colors.grey.shade600,
+                  const SizedBox(height: 12),
+                  Container(
+                    height: 2,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.blue.shade400, Colors.blue.shade200],
+                      ),
+                      borderRadius: BorderRadius.circular(1),
+                    ),
                   ),
-                  const SizedBox(width: 4),
-                  Flexible(
-                    child: Text(
-                      education['period'],
-                      style: TextStyle(
-                        fontSize: 13,
+                  const Spacer(),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.location_on,
+                        size: 13,
                         color: Colors.grey.shade600,
                       ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          widget.education['location'],
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.calendar_today,
+                        size: 13,
+                        color: Colors.grey.shade600,
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          widget.education['period'],
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-        ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -352,161 +422,213 @@ class EducationCard extends StatelessWidget {
 
 //--------------- End EducationCard -----------------------//
 //--------------- Experience Card -----------------------//
-class ExperienceCard extends StatelessWidget {
+class ExperienceCard extends StatefulWidget {
   final Map<String, dynamic> experience;
   const ExperienceCard({super.key, required this.experience});
 
   @override
+  State<ExperienceCard> createState() => _ExperienceCardState();
+}
+
+class _ExperienceCardState extends State<ExperienceCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  bool _isHovered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _animation = Tween<double>(
+      begin: 0.0,
+      end: -8.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 24),
-      padding: const EdgeInsets.all(28),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // FIXED: Responsive layout for role and period
-          isMobile
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      experience['role'],
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                        height: 1.3,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        experience['period'],
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade700,
-                          fontWeight: FontWeight.w600,
+    return MouseRegion(
+      onEnter: (_) {
+        setState(() => _isHovered = true);
+        _controller.forward();
+      },
+      onExit: (_) {
+        setState(() => _isHovered = false);
+        _controller.reverse();
+      },
+      child: AnimatedBuilder(
+        animation: _animation,
+        builder: (context, child) {
+          return Transform.translate(
+            offset: Offset(0, _animation.value),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              height: 380,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey.shade200),
+                boxShadow: _isHovered
+                    ? [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.15),
+                          blurRadius: 30,
+                          offset: const Offset(0, 15),
                         ),
-                      ),
-                    ),
-                  ],
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            experience['role'],
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            experience['company'],
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.blue.shade600,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        experience['period'],
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade700,
-                          fontWeight: FontWeight.w600,
+                      ]
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 15,
+                          offset: const Offset(0, 5),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-
-          // Company name for mobile (since it's in the column above for desktop)
-          if (isMobile) ...[
-            const SizedBox(height: 8),
-            Text(
-              experience['company'],
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.blue.shade600,
-                fontWeight: FontWeight.w600,
+                      ],
               ),
-            ),
-          ],
-
-          const SizedBox(height: 16),
-          ...(experience['achievements'] as List).map(
-            (achievement) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    width: 6,
-                    height: 6,
-                    margin: const EdgeInsets.only(top: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade600,
-                      shape: BoxShape.circle,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.blue.shade200),
+                    ),
                     child: Text(
-                      achievement,
+                      widget.experience['period'],
                       style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey.shade700,
-                        height: 1.5,
+                        fontSize: 11,
+                        color: Colors.blue.shade700,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    widget.experience['role'],
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                      height: 1.3,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.business,
+                        size: 14,
+                        color: Colors.blue.shade600,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          widget.experience['company'],
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.blue.shade600,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    height: 2,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.blue.shade400, Colors.blue.shade200],
+                      ),
+                      borderRadius: BorderRadius.circular(1),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: (widget.experience['achievements'] as List)
+                            .map((achievement) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: 5,
+                                      height: 5,
+                                      margin: const EdgeInsets.only(top: 6),
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue.shade600,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        achievement,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.grey.shade700,
+                                          height: 1.5,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            })
+                            .toList(),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.location_on,
+                        size: 16,
+                        color: Colors.grey.shade600,
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          widget.experience['location'],
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.grey.shade600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -520,9 +642,10 @@ class PublicationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      padding: const EdgeInsets.all(28),
+      padding: EdgeInsets.all(isMobile ? 20 : 24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -535,68 +658,73 @@ class PublicationCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.green.shade100,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.article,
-                  color: Colors.green.shade600,
-                  size: 28,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      publication['title']!,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () => launchURL(publication['url']!),
-                            child: Text(
-                              publication['journal']!,
-                              style: TextStyle(
-                                color: Colors.blue.shade700,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        IconButton(
-                          tooltip: 'Open publication',
-                          onPressed: () => launchURL(publication['url']!),
-                          icon: const Icon(Icons.open_in_new),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          // Icon
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.green.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.green.shade200),
+            ),
+            child: Icon(Icons.article, color: Colors.green.shade600, size: 24),
           ),
-          const SizedBox(height: 12),
-          Text(
-            '${publication['details']} • ${publication['year']}',
-            style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+          const SizedBox(width: 16),
+
+          // Content
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title
+                Text(
+                  publication['title']!,
+                  style: TextStyle(
+                    fontSize: isMobile ? 15 : 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                // Journal link
+                InkWell(
+                  onTap: () => launchURL(publication['url']!),
+                  child: Text(
+                    publication['journal']!,
+                    style: TextStyle(
+                      fontSize: isMobile ? 13 : 14,
+                      color: Colors.blue.shade700,
+                      fontWeight: FontWeight.w600,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+
+                // Details and year
+                Text(
+                  '${publication['details']} • ${publication['year']}',
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                ),
+              ],
+            ),
+          ),
+
+          // Open button
+          IconButton(
+            tooltip: 'Open publication',
+            onPressed: () => launchURL(publication['url']!),
+            icon: Icon(
+              Icons.open_in_new,
+              color: Colors.blue.shade600,
+              size: 20,
+            ),
+            padding: const EdgeInsets.all(8),
+            constraints: const BoxConstraints(),
           ),
         ],
       ),
@@ -604,6 +732,8 @@ class PublicationCard extends StatelessWidget {
   }
 }
 
+//--------------- End Publication Card -----------------------//
+//--------------- Showcase Card -----------------------//
 class ShowcaseCard extends StatelessWidget {
   final Map<String, dynamic> project;
   final bool isMobile;
@@ -914,6 +1044,8 @@ class ShowcaseCard extends StatelessWidget {
   }
 }
 
+//--------------- End Showcase Card -----------------------//
+//--------------- Skill Card -----------------------//
 class SkillCard extends StatefulWidget {
   final String title;
   final List<String> skills;
@@ -1084,6 +1216,8 @@ class __SkillCardState extends State<SkillCard>
   }
 }
 
+//--------------- End Skills Card -----------------------//
+//--------------- Project Card -----------------------//
 class ProjectCard extends StatefulWidget {
   final Map<String, dynamic> project;
   final double width;
@@ -1286,6 +1420,8 @@ class _ProjectCardState extends State<ProjectCard>
   );
 }
 
+//--------------- End Project Card -----------------------//
+//--------------- Filter Pill -----------------------//
 class FilterPill extends StatefulWidget {
   final String label;
   final bool isActive;
@@ -1343,48 +1479,108 @@ class _FilterPillState extends State<FilterPill> {
   }
 }
 
-class CertCard extends StatelessWidget {
+//--------------- End Filter Pill -----------------------//
+//--------------- Certifications Card -----------------------//
+class CertCard extends StatefulWidget {
   final String title;
   final double width;
   const CertCard({super.key, required this.title, required this.width});
 
   @override
+  State<CertCard> createState() => _CertCardState();
+}
+
+class _CertCardState extends State<CertCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  bool _isHovered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _animation = Tween<double>(
+      begin: 0.0,
+      end: -8.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 18,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.verified, color: Colors.indigo.shade600, size: 28),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
+    return MouseRegion(
+      onEnter: (_) {
+        setState(() => _isHovered = true);
+        _controller.forward();
+      },
+      onExit: (_) {
+        setState(() => _isHovered = false);
+        _controller.reverse();
+      },
+      child: AnimatedBuilder(
+        animation: _animation,
+        builder: (context, child) {
+          return Transform.translate(
+            offset: Offset(0, _animation.value),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              width: widget.width,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey.shade200),
+                boxShadow: _isHovered
+                    ? [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.15),
+                          blurRadius: 30,
+                          offset: const Offset(0, 15),
+                        ),
+                      ]
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 18,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.verified, color: Colors.indigo.shade600, size: 28),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      widget.title,
+                      style: const TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
 }
 
+//--------------- End Certifications Card -----------------------//
+//--------------- Contact Card -----------------------//
 class ContactCard extends StatefulWidget {
   final IconData icon;
   final String title;
@@ -1476,6 +1672,8 @@ class _ContactCardState extends State<ContactCard> {
   }
 }
 
+//--------------- End Contact Card -----------------------//
+//--------------- NavItem -----------------------//
 class NavItem {
   final String label;
   final IconData icon;
@@ -1483,6 +1681,8 @@ class NavItem {
   NavItem(this.label, this.icon, this.onTap);
 }
 
+//--------------- End NavItem -----------------------//
+//--------------- Floating Nav Bar -----------------------//
 class FloatingNavBar extends StatelessWidget {
   final List<NavItem> items;
   final int activeIndex;
@@ -1568,6 +1768,8 @@ class FloatingNavBar extends StatelessWidget {
   }
 }
 
+//--------------- End Floating Nav Bar-----------------------//
+//--------------- Scroll to Bottom -----------------------//
 class ScrollToTopButton extends StatelessWidget {
   final VoidCallback onTap;
   final bool isWhite;
@@ -1611,6 +1813,8 @@ class ScrollToTopButton extends StatelessWidget {
   }
 }
 
+//--------------- End Scroll to Bottom -----------------------//
+//--------------- Arrow Button -----------------------//
 class ArrowButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
@@ -1633,3 +1837,5 @@ class ArrowButton extends StatelessWidget {
     );
   }
 }
+
+//--------------- End Arrow Button -----------------------//

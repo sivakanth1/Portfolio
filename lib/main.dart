@@ -97,6 +97,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
   bool _showToTop = false;
   int _activeBottomIndex = 0;
   bool _isOverFooter = false;
+  bool _showSocialButtons = false;
 
   String activeTab = 'all';
 
@@ -154,6 +155,26 @@ class _PortfolioHomeState extends State<PortfolioHome>
     final current = _scrollController.position.pixels;
     final atFooter = current > maxScroll - 200;
     if (atFooter != _isOverFooter) setState(() => _isOverFooter = atFooter);
+
+    // Social buttons visibility logic
+    final contactContext = _contactKey.currentContext;
+    bool showSocial = false;
+
+    if (contactContext != null && current > 400) {
+      final rb = contactContext.findRenderObject() as RenderBox?;
+      if (rb != null) {
+        final pos = rb.localToGlobal(Offset.zero);
+        final screenHeight = MediaQuery.of(context).size.height;
+        // Hide when contact section is visible
+        showSocial = pos.dy > screenHeight * 0.3;
+      }
+    } else if (current > 400) {
+      showSocial = true;
+    }
+
+    if (showSocial != _showSocialButtons) {
+      setState(() => _showSocialButtons = showSocial);
+    }
   }
 
   int _detectActiveSectionIndex() {
@@ -217,6 +238,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    final isDesktop = width >= 750;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -225,7 +247,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
           CustomScrollView(
             controller: _scrollController,
             slivers: [
-              customAppBar(),
+              if (!isDesktop) customAppBar(),
               SliverToBoxAdapter(
                 child: Container(key: _homeKey, child: _buildHero(width)),
               ),
@@ -348,6 +370,53 @@ class _PortfolioHomeState extends State<PortfolioHome>
             ),
           ),
 
+          if (isDesktop) ...[
+            Positioned(
+              right: 24,
+              top: MediaQuery.of(context).size.height / 2 - 120,
+              child: AnimatedOpacity(
+                opacity: _showSocialButtons ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 300),
+                child: AnimatedSlide(
+                  offset: _showSocialButtons ? Offset.zero : const Offset(2, 0),
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                  child: IgnorePointer(
+                    ignoring: !_showSocialButtons,
+                    child: Column(
+                      children: [
+                        _buildFloatingSocialButton(
+                          'assets/githublogo.png',
+                          'GitHub',
+                          () => launchURL('https://github.com/sivakanth1'),
+                          Colors.black,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildFloatingSocialButton(
+                          'assets/linkedinLogo2.png',
+                          'LinkedIn',
+                          () => launchURL(
+                            'https://www.linkedin.com/in/sivakanth1',
+                          ),
+                          const Color(0xFF0077B5),
+                        ),
+                        const SizedBox(height: 16),
+                        _buildFloatingSocialButton(
+                          'assets/gmaillogo.png',
+                          'Email',
+                          () => launchURL(
+                            'mailto:k.l.sivakanthreddy01@gmail.com',
+                          ),
+                          Colors.red,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+
           // Scroll-to-top button (bottom-right, kept above the nav)
           Positioned(
             right: 16,
@@ -368,6 +437,83 @@ class _PortfolioHomeState extends State<PortfolioHome>
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // ------------------- FLoating Social Icons --------------
+  Widget _buildFloatingSocialButton(
+    String imagePath,
+    String tooltip,
+    VoidCallback onTap,
+    Color accentColor,
+  ) {
+    // Determine styling based on platform
+    Color backgroundColor;
+    EdgeInsets padding;
+    bool hasCustomBackground = false;
+
+    if (imagePath.contains('github')) {
+      backgroundColor = Colors.black;
+      padding = const EdgeInsets.all(13);
+      hasCustomBackground = true;
+    } else if (imagePath.contains('Linkedin') ||
+        imagePath.contains('linkedin')) {
+      backgroundColor = const Color(0xFF0A66C2); // Official LinkedIn blue
+      padding = const EdgeInsets.all(13);
+      hasCustomBackground = true;
+    } else if (imagePath.contains('gmail')) {
+      backgroundColor = Colors.white;
+      padding = const EdgeInsets.all(11);
+      hasCustomBackground = false;
+    } else {
+      backgroundColor = Colors.white;
+      padding = const EdgeInsets.all(12);
+      hasCustomBackground = false;
+    }
+
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: Colors.transparent,
+        elevation: 8,
+        shadowColor: accentColor.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            width: 56,
+            height: 56,
+            padding: padding,
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: hasCustomBackground
+                    ? Colors.transparent
+                    : Colors.grey.shade300,
+                width: 1.5,
+              ),
+            ),
+            child: Center(
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.high,
+                errorBuilder: (_, __, ___) => Icon(
+                  tooltip.contains('GitHub')
+                      ? Icons.code
+                      : tooltip.contains('LinkedIn')
+                      ? Icons.business
+                      : Icons.email,
+                  color: hasCustomBackground ? Colors.white : accentColor,
+                  size: 24,
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -625,16 +771,23 @@ class _PortfolioHomeState extends State<PortfolioHome>
         children: [
           SizedBox(
             width: double.infinity,
-            child: button('Download Resume', Icons.download, true, () {}),
+            child: button(
+              'Download Resume',
+              Icons.download,
+              true,
+              () => launchURL(
+                "https://drive.google.com/file/d/1kIW_IA1SPITQjWhzKx30SedW_u7UugPN/view?usp=sharing",
+              ),
+            ),
           ),
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             child: button(
               'Get in Touch',
-              Icons.email,
+              Icons.phone,
               false,
-              () => launchURL('mailto:k.l.sivakanthreddy01@gmail.com'),
+              () => launchURL('telto:+13616961805'),
             ),
           ),
         ],
@@ -642,7 +795,14 @@ class _PortfolioHomeState extends State<PortfolioHome>
     }
     return Row(
       children: [
-        button('Download Resume', Icons.download, true, () {}),
+        button(
+          'Download Resume',
+          Icons.download,
+          true,
+          () => launchURL(
+            "https://drive.google.com/file/d/1kIW_IA1SPITQjWhzKx30SedW_u7UugPN/view?usp=sharing",
+          ),
+        ),
         const SizedBox(width: 12),
         button(
           'Get in Touch',
