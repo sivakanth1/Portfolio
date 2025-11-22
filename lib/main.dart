@@ -4,7 +4,6 @@ import 'package:portfolio/Experience/experience.dart';
 import 'package:portfolio/Footer/contact.dart';
 import 'package:portfolio/Publications/publications.dart';
 import 'package:portfolio/shared/app_bar.dart';
-import 'package:portfolio/temp.dart' as temp;
 import 'Education/education.dart';
 import 'Profile_About_Me/about_me.dart';
 import 'Projects/showcase.dart';
@@ -84,6 +83,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
   static const double kBottomNavHeight = 64;
 
   final Map<String, bool> _sectionVisibility = {
+    'home': false,
     'about': false,
     'education': false,
     'experience': false,
@@ -136,6 +136,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
 
   // --- Scroll handling ---
   void _onScroll() {
+    _checkSectionVisibility('home', _homeKey);
     _checkSectionVisibility('about', _aboutKey);
     _checkSectionVisibility('education', _educationKey);
     _checkSectionVisibility('experience', _experienceKey);
@@ -787,7 +788,7 @@ class _PortfolioHomeState extends State<PortfolioHome>
               'Get in Touch',
               Icons.phone,
               false,
-              () => launchURL('telto:+13616961805'),
+              () => launchURL('tel:+13616961805'),
             ),
           ),
         ],
