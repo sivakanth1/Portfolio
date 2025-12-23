@@ -1,6 +1,8 @@
+
 import React from 'react';
 import { Project } from '../types';
-import { Github, ExternalLink, Calendar } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 interface Props {
@@ -10,56 +12,51 @@ interface Props {
 const ProjectCard: React.FC<Props> = ({ project }) => {
   return (
     <motion.div 
-      whileHover={{ y: -8 }}
-      className="bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-lg border border-slate-100 dark:border-slate-800 flex flex-col h-full group"
+      whileHover={{ y: -5 }}
+      className="group bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all h-full flex flex-col"
     >
-      <div className="relative overflow-hidden h-48 w-full">
+      <Link to={`/projects/${project.id}`} className="block relative h-48 overflow-hidden">
         <img 
           src={project.image} 
           alt={project.title} 
-          className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
-      </div>
+        {project.outcome && (
+          <div className="absolute top-4 right-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur text-primary-600 dark:text-primary-400 text-xs font-bold px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 shadow-sm">
+            {project.outcome}
+          </div>
+        )}
+      </Link>
 
       <div className="p-6 flex-1 flex flex-col">
-        <div className="flex items-center justify-between mb-2">
-           <span className="text-xs font-semibold uppercase tracking-wider text-primary-600 dark:text-primary-400 flex items-center gap-1">
-             <Calendar size={12} />
-             {project.period}
-           </span>
+        <div className="mb-2">
+          <span className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+            {project.category === 'ml-ai' ? 'AI & Machine Learning' : project.category}
+          </span>
         </div>
         
-        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-          {project.title}
-        </h3>
+        <Link to={`/projects/${project.id}`} className="group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+            {project.title}
+            <ArrowUpRight size={18} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+          </h3>
+        </Link>
 
-        <div className="mb-4 flex-1">
-           <ul className="list-disc list-inside space-y-1">
-              {project.description.slice(0, 2).map((desc, idx) => (
-                <li key={idx} className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
-                  {desc}
-                </li>
-              ))}
-           </ul>
-        </div>
+        <p className="text-slate-600 dark:text-slate-300 text-sm mb-4 line-clamp-3 flex-1">
+          {project.description[0]}
+        </p>
 
         <div className="flex flex-wrap gap-2 mt-auto">
-          {project.tags.map(tag => (
-            <span key={tag} className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs rounded-full">
+          {project.techStack.slice(0, 3).map(tag => (
+            <span key={tag} className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs rounded-md">
               {tag}
             </span>
           ))}
-        </div>
-        
-        <div className="mt-6 flex space-x-4 border-t border-slate-100 dark:border-slate-800 pt-4">
-           {/* Fallback link if none provided in data */}
-           <a href="#" className="flex items-center text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-             <Github size={18} className="mr-2" /> Code
-           </a>
-           <a href="#" className="flex items-center text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-             <ExternalLink size={18} className="mr-2" /> Live Demo
-           </a>
+          {project.techStack.length > 3 && (
+            <span className="px-2.5 py-1 bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 text-xs rounded-md">
+              +{project.techStack.length - 3}
+            </span>
+          )}
         </div>
       </div>
     </motion.div>
