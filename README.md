@@ -149,7 +149,7 @@ All portfolio content (projects, skills, experience, education, certifications, 
 
 ## 🔗 Links
 
-- **Portfolio**: [Live Site](https://sivakanthreddy.com) _(update with your deployed URL)_
+- **Portfolio**: [Live Site](https://sivakanthreddy.com)
 - **GitHub**: [sivakanth1](https://github.com/sivakanth1)
 - **LinkedIn**: [sivakanth1](https://www.linkedin.com/in/sivakanth1)
 
