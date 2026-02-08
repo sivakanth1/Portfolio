@@ -6,6 +6,7 @@ import FadeIn from '../components/AnimationWrapper';
 import ProjectCard from '../components/ProjectCard';
 import { ChevronUp } from 'lucide-react';
 import { useState } from 'react';
+import SivaImg from '../assets/images/siva.jpg';
 
 const Home: React.FC = () => {
   const featuredProjects = PROJECTS.filter(p => p.featured).slice(0, 3);
@@ -41,7 +42,7 @@ const Home: React.FC = () => {
                 {/* Image Mask/Container */}
                 <div className="relative w-72 h-72 sm:w-96 sm:h-96 lg:w-[420px] lg:h-[420px] rounded-[2rem] rotate-3 hover:rotate-0 transition-all duration-500 ease-out shadow-2xl overflow-hidden border-4 border-white dark:border-slate-800 bg-white dark:bg-slate-900 group">
                   <img
-                    src="images/siva.jpg"
+                    src={SivaImg}
                     alt="Siva Kanth Reddy"
                     className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-700"
                   />
@@ -285,7 +286,7 @@ const Home: React.FC = () => {
                   <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Publications</h3>
                   {PUBLICATIONS.map((pub, idx) => (
                     <div key={idx} className="mb-4 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-                      <a href="#" className="font-bold text-slate-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors block mb-2 leading-tight">
+                      <a href="https://www.ijiemr.org/downloads/paper/Volume-12/abnet-adaptive-balanced-network-for-multiscale-object-detection-in-remote-sensing-imagery" target="_blank" className="font-bold text-slate-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors block mb-2 leading-tight">
                         {pub.title}
                       </a>
                       <p className="text-sm text-slate-500">{pub.journal} • {pub.details}</p>

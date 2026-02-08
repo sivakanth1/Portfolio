@@ -29,7 +29,7 @@ const App: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/projects" element={<AllProjects />} />
             <Route path="/projects/:id" element={<ProjectDetail />} />
-            {/* <Route path="/writing" element={<Writing />} /> */}
+            <Route path="/writing" element={<Writing />} />
             {/* Redirect /blog to /writing for backward compatibility if needed, or just route */}
             {/* <Route path="/blog" element={<Writing />} /> */}
             <Route path="/blogfuture" element={<BlogFuture />} />
